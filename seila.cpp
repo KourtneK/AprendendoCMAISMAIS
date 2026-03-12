@@ -9,16 +9,24 @@ int main()  {
     std::cout << "Ola Mundo" << std::endl;
     // std::string nome;
     // std::cin >> nome;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     std::string entrada;
 
     while (entrada != "exit")
         std::cin >> entrada;
-    
-    
-    
-    
-    
-    
-    
 return 0;
 }

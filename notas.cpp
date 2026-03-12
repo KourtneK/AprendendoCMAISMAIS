@@ -4,19 +4,36 @@
 #include <float.h>
 
 int main() {
-    system("cls");
 
-    float var = 3.5;
-    float var2 = 1.4;
+    std::string comando;
+    comando = "start";
 
-    float sum = (var + var2) / 2.0f;
+    do {
+        if (comando == "start") {
+        system("cls");
 
-    if (sum < 6.7) {
-        std::cout << "media eh baixa " << sum << std::endl;
+        float var1 = 0;
+        float var2 = 0;
+
+        std::cout << "digita um numero ";
+        std::cin >> var1;
+            
+        std::cout << "digita um numero ";
+        std::cin >> var2;
+
+        float sum = (var1 + var2) / 2.0f;
+
+        if (sum < 6.7) {
+            std::cout << "media eh baixa " << sum << std::endl;
+        }
+        else {
+            std::cout << "media eh alta " << sum << std::endl;
+        }
     }
-    else {
-        std::cout << "media eh alta " << sum << std::endl;
-    }
+        std::cin >> comando;
+    } while (comando == "start");
+    
+    
 
 
 
@@ -28,7 +45,8 @@ int main() {
 
     std::string entrada;
 
-    while (entrada != "exit")
+    while (entrada != "exit") {
         std::cin >> entrada;
+    }
     return 0;
 }
