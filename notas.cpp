@@ -3,13 +3,18 @@
 #include <string>
 #include <float.h>
 
-int main() {
 
-    std::string comando;
-    comando = "start";
 
-    do {
-        if (comando == "start") {
+void exit(std::string cmdE) {
+    if (cmdE == "exit")
+    {
+        std::exit(0);
+    }
+    
+}
+
+void start(std::string cmdS) {
+    if (cmdS == "start") {
         system("cls");
 
         float var1 = 0;
@@ -29,29 +34,24 @@ int main() {
         else {
             std::cout << "media eh alta " << sum << std::endl;
         }
+
+        std::cout << "digite start para continuar ou exit para sair" << std::endl;
     }
-        std::cin >> comando;
-    } while (comando == "start");
-    
-    
+}
 
+int main() {
+    std::string cmdE = "start";
 
-
-
-
-
-
-    
-
-    std::string exit;
-    exit = "exit";
-    
-    if (exit == "exit")
-    {
-        while (comando == "exit") {
-            std::cin >> comando;
+    do {
+        if (cmdE == "start")
+        {
+            start(cmdE);
         }
-    }
+        std::cin >> cmdE;
+
+        exit(cmdE);
+
+    } while (cmdE == "start");
 
     return 0;
 }
