@@ -43,10 +43,15 @@ int main() {
 
     
 
-    std::string entrada;
-
-    while (entrada != "exit") {
-        std::cin >> entrada;
+    std::string exit;
+    exit = "exit";
+    
+    if (exit == "exit")
+    {
+        while (comando == "exit") {
+            std::cin >> comando;
+        }
     }
+
     return 0;
 }
