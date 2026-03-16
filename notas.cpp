@@ -17,18 +17,18 @@ void start(std::string cmdS) {
     if (cmdS == "start") {
         system("cls");
 
-        float var1 = 0;
-        float var2 = 0;
+        float var1, var2;
+
 
         std::cout << "digita um numero ";
         std::cin >> var1;
-            
         std::cout << "digita um numero ";
         std::cin >> var2;
 
+
         float sum = (var1 + var2) / 2.0f;
 
-        if (sum < 6.7) {
+        if (sum < 6.0f) {
             std::cout << "media eh baixa " << sum << std::endl;
         }
         else {
@@ -40,18 +40,22 @@ void start(std::string cmdS) {
 }
 
 int main() {
-    std::string cmdE = "start";
+    std::string cmd = "start";
 
-    do {
-        if (cmdE == "start")
-        {
-            start(cmdE);
-        }
-        std::cin >> cmdE;
+    do
+    {
+        start(cmd);
+  
+        std::cin >> cmd;
+        
+        exit(cmd);
 
-        exit(cmdE);
 
-    } while (cmdE == "start");
+
+
+
+    } while (cmd != "exit");
+    
 
     return 0;
 }
