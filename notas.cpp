@@ -3,6 +3,39 @@
 #include <string>
 #include <float.h>
 
+/*
+VARIAVEIS E STRINGS USADAS
+
+cmdS = command start
+cmdE = command exit
+cmd = command
+var = variavel
+*/
+
+
+/*
+FUNÇÕES
+
+exit = funcao que pede o comando de saida
+start = funcao que inicia o programa
+*/
+
+
+/*
+SINTAXE
+
+std = chama um operador
+:: = atua como separador para funcionalidades
+cout = inserir uma diticação no programa
+<</>> = apontam para o operador da função
+void = função que retorna "vazio"?
+int = numero inteiro, usado na funçaõ, significa que a função retorna um inteiro, mas como, se as variaveis são float?
+cin = exibe algo no programa
+*/
+
+
+
+
 
 
 void exit(std::string cmdE) {
