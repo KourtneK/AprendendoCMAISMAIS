@@ -3,6 +3,8 @@
 #include <string>
 #include <float.h>
 #include <limits>
+#include <fstream>
+#include "sair.h"
 
 /*
 VARIAVEIS E STRINGS USADAS
@@ -39,18 +41,6 @@ include = inclui uma biblioteca no programa
 
 */
 
-
-
-
-
-
-void exit(std::string cmdE) {
-    if (cmdE == "exit")
-    {
-        std::exit(0);
-    }
-    
-}
 
 void start(std::string cmdS) {
     if (cmdS == "start") {
@@ -99,12 +89,8 @@ int main() {
         start(cmd);
   
         std::cin >> cmd;
-        
-        exit(cmd);
 
-
-
-
+        checkExit(cmd);
 
     } while (cmd != "exit");
     
