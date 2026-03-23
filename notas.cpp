@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <string>
 #include <float.h>
+#include <limits>
 
 /*
 VARIAVEIS E STRINGS USADAS
@@ -28,9 +29,14 @@ std = chama um operador
 :: = atua como separador para funcionalidades
 cout = inserir uma diticação no programa
 <</>> = apontam para o operador da função
-void = função que retorna "vazio"?
-int = numero inteiro, usado na funçaõ, significa que a função retorna um inteiro, mas como, se as variaveis são float?
-cin = exibe algo no programa
+void = quando usado em unma função, não retorna nada da função, apenas o que ela faz
+int = quando usado dentro de uma função, retorna a função
+cin = algo que foi digitado é exibido no programa
+include = inclui uma biblioteca no programa
+# = operador usado para incluir a biblioteca
+</> = operadores usados para colocar o nome da biblioteca que se quer incluir
+
+
 */
 
 
@@ -57,6 +63,12 @@ void start(std::string cmdS) {
         std::cin >> var1;
         std::cout << "digita um numero ";
         std::cin >> var2;
+
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(fail);
+            system("cls");
+        }
 
 
         float sum = (var1 + var2) / 2.0f;
