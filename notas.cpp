@@ -54,33 +54,40 @@ void exit(std::string cmdE) {
 
 void start(std::string cmdS) {
     if (cmdS == "start") {
-        system("cls");
+        
 
+        bool erro = true;
         float var1, var2;
 
-
-        std::cout << "digita um numero ";
-        std::cin >> var1;
-        std::cout << "digita um numero ";
-        std::cin >> var2;
-
-        if (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(fail);
+        while (erro) {
             system("cls");
+
+            std::cout << "digita um numero: ";
+            std::cin >> var1;
+            std::cout << "digita um numero: ";
+            std::cin >> var2;
+
+                
+            if (std::cin.fail()) {
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+                continue;
+            }
+
+            erro = false;
         }
+            float sum = (var1 + var2) / 2.0f;
+
+            if (sum < 6.0f) {
+                std::cout << "media eh baixa " << sum << std::endl;
+            }
+            else {
+                std::cout << "media eh alta " << sum << std::endl;
+            }
+
+            std::cout << "digite start para continuar ou exit para sair\n" << std::endl;
 
 
-        float sum = (var1 + var2) / 2.0f;
-
-        if (sum < 6.0f) {
-            std::cout << "media eh baixa " << sum << std::endl;
-        }
-        else {
-            std::cout << "media eh alta " << sum << std::endl;
-        }
-
-        std::cout << "digite start para continuar ou exit para sair" << std::endl;
     }
 }
 
