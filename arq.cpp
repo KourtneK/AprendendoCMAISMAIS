@@ -5,6 +5,8 @@
 
 
 /*
+SINTAXE BASICA DA LIB fstream
+
 std::ofstream: (Output File) Serve para escrever.
 std::ifstream: (Input File) Serve para ler.
 std::fstream: (File Stream) Ler e escrever, mas exige que você diga o que quer fazer na hora de abrir.
