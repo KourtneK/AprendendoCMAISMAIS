@@ -6,6 +6,7 @@
 #include "sair.h"
 #include "ctime"
 #include "fstream"
+#include <math.h>
 
 
 /*
@@ -24,10 +25,19 @@ localtime: É a função que faz a conversão do tempo bruto para a estrutura de
 void notas()
 {
     int nota;
-    nota = 0, 100;
+    nota = 0;
+    std::cout << "qual a nota\n";
+    std::cin >> nota;
+
 
     float nota2;
-    nota2 = 0.0, 10.0;
+    nota2 = 10.0;
+
+    float sum = nota / nota2;
+
+    std::cout << sum << std::endl;
+
+
 
 
 
@@ -45,7 +55,7 @@ void notas()
 
 
 
-// HISTORICO DE MATERIAS?
+// HISTORICO DE MATERIAS
 int main()
 {
     std::string materia;
