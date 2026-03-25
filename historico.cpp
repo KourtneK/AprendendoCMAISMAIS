@@ -22,10 +22,10 @@ localtime: É a função que faz a conversão do tempo bruto para a estrutura de
 
 
 // FUNÇÃO DE NOTAS
-void notas()
+float notas()
 {
     int nota; // Define um inteiro para nota
-    nota = 000; // Define a nota como 000
+    nota = 0; // Define a nota como 000
     std::cout << "qual a nota\n"; // Mostra a pergunta
     std::cin >> nota; // Pede a nota
 
@@ -35,22 +35,38 @@ void notas()
 
     float sum = nota / nota_convert; // Soma a nota inteira com a nota float ( a soma tambem a eh float)
 
-    std::cout << sum << std::endl; // Exibe a soma
+    std::cout << sum << std::endl; // Exibe a soma (float)
 
 
 
 
 
 
-    return;
+    return sum; // return tambem pode retornar parametros, como, inteiro, float, sum, nota, nota_convert
 }
 
 // HISTORICO DE MATERIAS
 int main()
 {
+    time_t tempo = std::time(0);
+
+    struct tm* info = std::localtime(&tempo);
+
+    int dia = info->tm_mday;
+    int mes = info->tm_mon + 1;
+    int ano = info->tm_year + 1900;
+    int hora = info->tm_hour;
+    int minuto = info->tm_min;
+    int segundo = info->tm_sec;
+    
+    
+    
+
     std::string materia; // Define materia como texto
     std::cout << "qual materia\n" << std::endl; // pergunta qual a materia
     std::getline(std::cin >> std::ws, materia); // pede o nome da materia e pega a ultima linha não usada do arquivo e coloca a materia
+
+    notas(); // chama a função notas
 
     std::ofstream arquivo(materia + ".txt", std::ios::app); // Define um arquivo para cada materia
 
@@ -58,11 +74,23 @@ int main()
     if (arquivo.is_open()) // pergunta se o arquivo pode er aberto/criado
     {
         arquivo << "materia adicionada\n" << std::endl; // Exibe a materia adicionada
+
+        // Define a data e horario
+        arquivo << "[" << info->tm_mday << "/" //Dia
+                        << info->tm_mon + 1 << "/" //Mês
+                        << info->tm_year + 1900<< " " // Ano
+                        << info->tm_hour << ":" // Hora
+                        << info->tm_min << ":" // Mnuto
+                        << info->tm_sec << "]" // Segundo
+                        << std::endl; //Termina a linha
+
+        arquivo << "nota: " << nota << "| media: " << sum << std::endl; // Define as nota
         arquivo.close(); // fecha o arquivo
 
 
     }
 
+    
 
 
 
