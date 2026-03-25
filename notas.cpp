@@ -3,8 +3,11 @@
 #include <string>
 #include <float.h>
 #include <limits>
-#include <fstream>
 #include "sair.h"
+#include "ctime"
+#include "fstream"
+
+
 
 /*
 VARIAVEIS E STRINGS USADAS
@@ -97,3 +100,4 @@ int main() {
 
     return 0;
 }
+
