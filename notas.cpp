@@ -45,7 +45,7 @@ include = inclui uma biblioteca no programa
 */
 
 
-void start(std::string cmdS) {
+void start(std::string cmdS) { // cmdS = command start | inicia o programa
     if (cmdS == "start") {
         
 
@@ -85,7 +85,7 @@ void start(std::string cmdS) {
 }
 
 int main() {
-    std::string cmd = "start";
+    std::string cmd = "start"; // define que commandd é "start"
 
     do
     {
@@ -93,7 +93,7 @@ int main() {
   
         std::cin >> cmd;
 
-        checkExit(cmd);
+        checkExit(cmd); //chama a lib sair.h
 
     } while (cmd != "exit");
     
