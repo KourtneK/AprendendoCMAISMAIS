@@ -24,18 +24,18 @@ localtime: É a função que faz a conversão do tempo bruto para a estrutura de
 // FUNÇÃO DE NOTAS
 void notas()
 {
-    int nota;
-    nota = 0;
-    std::cout << "qual a nota\n";
-    std::cin >> nota;
+    int nota; // Define um inteiro para nota
+    nota = 000; // Define a nota como 000
+    std::cout << "qual a nota\n"; // Mostra a pergunta
+    std::cin >> nota; // Pede a nota
 
 
-    float nota2;
-    nota2 = 10.0;
+    float nota_convert; // Define o conversor de notas como float
+    nota_convert = 10.0; // Define o valor base do conversor como 10.0 (float)
 
-    float sum = nota / nota2;
+    float sum = nota / nota_convert; // Soma a nota inteira com a nota float ( a soma tambem a eh float)
 
-    std::cout << sum << std::endl;
+    std::cout << sum << std::endl; // Exibe a soma
 
 
 
@@ -45,29 +45,20 @@ void notas()
     return;
 }
 
-
-
-
-
-
-
-
-
-
-
 // HISTORICO DE MATERIAS
 int main()
 {
-    std::string materia;
-    std::cout << "qual materia: " << std::endl;
-    std::getline(std::cin >> std::ws, materia);
+    std::string materia; // Define materia como texto
+    std::cout << "qual materia\n" << std::endl; // pergunta qual a materia
+    std::getline(std::cin >> std::ws, materia); // pede o nome da materia e pega a ultima linha não usada do arquivo e coloca a materia
 
-    std::ofstream arquivo(materia + ".txt", std::ios::app);
+    std::ofstream arquivo(materia + ".txt", std::ios::app); // Define um arquivo para cada materia
 
-    if (arquivo.is_open())
+    // Cria o arquivo da materia se ele puder ser aberto
+    if (arquivo.is_open()) // pergunta se o arquivo pode er aberto/criado
     {
-        arquivo << "materia adicionada\n" << std::endl;
-        arquivo.close();
+        arquivo << "materia adicionada\n" << std::endl; // Exibe a materia adicionada
+        arquivo.close(); // fecha o arquivo
 
 
     }
