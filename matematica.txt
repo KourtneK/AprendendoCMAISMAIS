@@ -1,0 +1,14 @@
+materia adicionada
+
+[25/3/2026 20:13:8] materia: matematica nota: 3.3
+materia adicionada
+
+[25/3/2026 20:13:53] materia: matematica nota: 8.8
+
+materia adicionada
+
+[25/3/2026 20:14:9] materia: matematica nota: 7.7
+
+materia adicionada
+[25/3/2026 20:14:33] materia: matematica nota: 9.9
+
