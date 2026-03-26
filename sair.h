@@ -19,7 +19,7 @@ void checkExit(std::string cmdE)
     }
 }
 
-void logError(std::string originWay, std::string logErro, std::string posicao) // Da pra colocar mais de um parametro em uma função void
+void logError(std::string originWay, std::string logErro) // Da pra colocar mais de um parametro em uma função void
 {
     time_t tempo = std::time(0); // Declara uma variavel da lib ctime chamada tempo e chama a função time(0)
 
@@ -33,7 +33,6 @@ void logError(std::string originWay, std::string logErro, std::string posicao) /
     int segundo = info->tm_sec;
 
     size_t archive_pos;
-    std::string originWay = __FILE__;
     
 
     archive_pos = (originWay.find_last_of("\\/"));
@@ -47,11 +46,19 @@ void logError(std::string originWay, std::string logErro, std::string posicao) /
 
     std::ofstream arqLog;
     arqLog.open(logErro, std::ios::app);
+    std::cout << std::ws, arqLog;
 
-    arqLog << "[" << info->tm_mday << "/" //Dia
-                        << info->tm_mon + 1 << "/" //Mês
-                        << info->tm_year + 1900<< " " // Ano
-                        << info->tm_hour << ":" // Hora
-                        << info->tm_min << ":" // Minuto
-                        << info->tm_sec << "] "; // Segundo
+    if (arqLog.is_open())
+    {
+        arqLog << "[" << info->tm_mday << "/" //Dia
+                            << info->tm_mon + 1 << "/" //Mês
+                            << info->tm_year + 1900<< " " // Ano
+                            << info->tm_hour << ":" // Hora
+                            << info->tm_min << ":" // Minuto
+                            << info->tm_sec << "] "; // Segundo
+        
+        arqLog << "Arquivo: " << logErro << " ";
+        arqLog << "Erro: " << originWay << "\n" << std::endl;
+        arqLog.close();
+    }
 }

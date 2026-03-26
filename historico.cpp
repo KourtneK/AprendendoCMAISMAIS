@@ -31,7 +31,7 @@ float notas()
 
     if (nota > 100)
     {
-        logError("omaga, digitaste uma nota maio q 100\n");
+        logError(__FILE__, "omaga, digitaste uma nota maio q 100\n");
 
     }
 
