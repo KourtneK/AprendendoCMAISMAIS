@@ -54,8 +54,19 @@ float notas()
 // HISTORICO DE MATERIAS
 int main()
 {
-    std::string archive = __FILE__; // Macro dr pre processador, caminho do arquivo
-    archive.substr(0, archive.find_last_of("\\/"));
+    // Macro de pre processador, caminho do arquivo
+    std::string npos;
+    std::string archive = __FILE__;
+    std::string archive_positon = __FILE__;
+    std::string archive_nome = __FILE__;
+    std::string archive_final = __FILE__;
+
+    archive_positon = (archive.find_last_of("."));
+    archive = arquiver.substr();
+    archive_nome = archive.substr(0, archive_positon);
+    archive_final = archive_nome + "_errors.log";
+
+
 
 
     float media = notas(); // Chama a função notas
