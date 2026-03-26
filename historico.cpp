@@ -8,17 +8,23 @@
 #include <math.h>
 #include "sair.h"
 
+
+
 /*
 SINTAXE BASICA DA LIB ctime
 
 time_t: É o tipo de variável que guarda o tempo "bruto" (segundos desde 1970).
 tm: É uma struct (estrutura) que quebra esse tempo bruto em dia, mês e ano.
 localtime: É a função que faz a conversão do tempo bruto para a estrutura de tempo humana.
-
-
-
 */
 
+
+/*
+SINTAXE DA LIB STRING
+
+find_last_of: Para encontrar onde termina a última barra (/ ou \) do endereço.
+substr: Para cortar a string e pegar apenas o nome do arquivo.
+*/
 
 // FUNÇÃO DE NOTAS
 float notas()
@@ -28,6 +34,12 @@ float notas()
     std::cout << "qual a nota\n"; // Mostra a pergunta
     std::cin >> nota; // Pede a nota
 
+    if (nota > 100)
+    {
+        std::cerr << "omaga, digitaste uma nota maio q 100\n";
+
+    }
+
 
     float nota_convert; // Define o conversor de notas como float
     nota_convert = 10.0; // Define o valor base do conversor como 10.0 (float)
@@ -36,17 +48,16 @@ float notas()
 
     std::cout << sum << std::endl; // Exibe a soma (float)
 
-
-
-
-
-
     return sum; // return tambem pode retornar parametros, como, inteiro, float, sum, nota, nota_convert
 }
 
 // HISTORICO DE MATERIAS
 int main()
 {
+    std::string archive = __FILE__; // Macro dr pre processador, caminho do arquivo
+    archive.substr(0, archive.find_last_of("\\/"));
+
+
     float media = notas(); // Chama a função notas
 
     system("cls");
@@ -84,7 +95,6 @@ int main()
         arquivo << "materia: " << materia << " "; // Define a materia
         arquivo << "nota: " << media << "\n" << std::endl; // Define a nota
         arquivo.close(); // fecha o arquivo
-
 
     }
 
