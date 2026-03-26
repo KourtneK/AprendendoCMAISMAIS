@@ -3,11 +3,10 @@
 #include <string>
 #include <float.h>
 #include <limits>
-#include "sair.h"
-#include "ctime"
-#include "fstream"
+#include <ctime>
+#include <fstream>
 #include <math.h>
-
+#include "sair.h"
 
 /*
 SINTAXE BASICA DA LIB ctime
@@ -48,9 +47,13 @@ float notas()
 // HISTORICO DE MATERIAS
 int main()
 {
-    time_t tempo = std::time(0);
+    float media = notas(); // Chama a função notas
 
-    struct tm* info = std::localtime(&tempo);
+    system("cls");
+
+    time_t tempo = std::time(0); // Declara uma variavel da lib ctime chamada tempo e chama a função time(0)
+
+    struct tm* info = std::localtime(&tempo); // Não entendi como isso funciona
 
     int dia = info->tm_mday;
     int mes = info->tm_mon + 1;
@@ -59,41 +62,31 @@ int main()
     int minuto = info->tm_min;
     int segundo = info->tm_sec;
     
-    
-    
-
     std::string materia; // Define materia como texto
     std::cout << "qual materia\n" << std::endl; // pergunta qual a materia
     std::getline(std::cin >> std::ws, materia); // pede o nome da materia e pega a ultima linha não usada do arquivo e coloca a materia
-
-    notas(); // chama a função notas
 
     std::ofstream arquivo(materia + ".txt", std::ios::app); // Define um arquivo para cada materia
 
     // Cria o arquivo da materia se ele puder ser aberto
     if (arquivo.is_open()) // pergunta se o arquivo pode er aberto/criado
     {
-        arquivo << "materia adicionada\n" << std::endl; // Exibe a materia adicionada
+        arquivo << "materia adicionada" << std::endl; // Exibe a materia adicionada
 
         // Define a data e horario
         arquivo << "[" << info->tm_mday << "/" //Dia
                         << info->tm_mon + 1 << "/" //Mês
                         << info->tm_year + 1900<< " " // Ano
                         << info->tm_hour << ":" // Hora
-                        << info->tm_min << ":" // Mnuto
-                        << info->tm_sec << "]" // Segundo
-                        << std::endl; //Termina a linha
+                        << info->tm_min << ":" // Minuto
+                        << info->tm_sec << "] "; // Segundo
 
-        arquivo << "nota: " << nota << "| media: " << sum << std::endl; // Define as nota
+        arquivo << "materia: " << materia << " "; // Define a materia
+        arquivo << "nota: " << media << "\n" << std::endl; // Define a nota
         arquivo.close(); // fecha o arquivo
 
 
     }
-
-    
-
-
-
 
     return 0;
 }
