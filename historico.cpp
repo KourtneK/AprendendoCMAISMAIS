@@ -8,19 +8,14 @@
 #include <math.h>
 #include "sair.h"
 
-
-
 /*
 SINTAXE BASICA DA LIB ctime
 
 time_t: É o tipo de variável que guarda o tempo "bruto" (segundos desde 1970).
 tm: É uma struct (estrutura) que quebra esse tempo bruto em dia, mês e ano.
 localtime: É a função que faz a conversão do tempo bruto para a estrutura de tempo humana.
-*/
 
-
-/*
-SINTAXE DA LIB STRING
+SINTAXE DA LIB string
 
 find_last_of: Para encontrar onde termina a última barra (/ ou \) do endereço.
 substr: Para cortar a string e pegar apenas o nome do arquivo.
@@ -36,10 +31,9 @@ float notas()
 
     if (nota > 100)
     {
-        std::cerr << "omaga, digitaste uma nota maio q 100\n";
+        logError("omaga, digitaste uma nota maio q 100\n");
 
     }
-
 
     float nota_convert; // Define o conversor de notas como float
     nota_convert = 10.0; // Define o valor base do conversor como 10.0 (float)
@@ -54,20 +48,8 @@ float notas()
 // HISTORICO DE MATERIAS
 int main()
 {
-    // Macro de pre processador, caminho do arquivo
-    std::string npos;
-    std::string archive = __FILE__;
-    std::string archive_positon = __FILE__;
     std::string archive_nome = __FILE__;
     std::string archive_final = __FILE__;
-
-    archive_positon = (archive.find_last_of("."));
-    archive = arquiver.substr();
-    archive_nome = archive.substr(0, archive_positon);
-    archive_final = archive_nome + "_errors.log";
-
-
-
 
     float media = notas(); // Chama a função notas
 
@@ -75,7 +57,7 @@ int main()
 
     time_t tempo = std::time(0); // Declara uma variavel da lib ctime chamada tempo e chama a função time(0)
 
-    struct tm* info = std::localtime(&tempo); // Não entendi como isso funciona
+    struct tm* info = std::localtime(&tempo); // Ionforma o tempo usando abstração
 
     int dia = info->tm_mday;
     int mes = info->tm_mon + 1;
