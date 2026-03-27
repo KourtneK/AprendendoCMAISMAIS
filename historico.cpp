@@ -7,6 +7,7 @@
 #include <fstream>
 #include <math.h>
 #include "sair.h"
+#include "errorlog.h"
 
 /*
 SINTAXE BASICA DA LIB ctime
