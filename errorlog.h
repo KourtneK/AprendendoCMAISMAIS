@@ -48,7 +48,7 @@ void logError(std::string originWay, std::string logErro) // Da pra colocar mais
                             << info->tm_min << ":" // Minuto
                             << info->tm_sec << "] "; // Segundo
         
-        arqLog << "Arquivo: " << originWay << "\n" << std::endl;
+        arqLog << "Arquivo: " << originWay << "\n";
         arqLog << "Erro: " << logErro << "\n" << std::endl;
         arqLog.close();
     }

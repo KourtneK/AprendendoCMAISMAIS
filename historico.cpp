@@ -33,7 +33,6 @@ float notas()
     if (nota > 100)
     {
         logError(__FILE__, "omaga, digitaste uma nota maio q 100\n");
-
     }
 
     float nota_convert; // Define o conversor de notas como float
@@ -87,6 +86,7 @@ int main()
                         << info->tm_sec << "] "; // Segundo
 
         arquivo << "materia: " << materia << " "; // Define a materia
+        system("cls");
         arquivo << "nota: " << media << "\n" << std::endl; // Define a nota
         arquivo.close(); // fecha o arquivo
 
