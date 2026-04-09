@@ -11,7 +11,7 @@
 int main(int argc, char const *argv[])
 {
     // 1. Liga o render de video
-    SDL_Init;
+    SDL_Init(SDL_INIT_VIDEO);
 
     // 2. Cria a Janela e o Renderizador
     SDL_Window* window = nullptr;
