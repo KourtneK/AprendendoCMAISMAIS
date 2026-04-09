@@ -1,6 +1,8 @@
 #include <iostream>
-#include <SDL.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
 #include <time.h>
+#include <float.h>
 #include <string>
 
 enum Direction{STOP, RIGHT, UPRIGHT, DOWNRIGHT, LEFT, UPLEFT, DOWNLEFT};
@@ -159,13 +161,18 @@ class cGameManager
                 ball = new cBall(width / 2, height / 2);
                 player1 = new cPaddle(1, height / 2);
                 player2 = new cPaddle(width - 2, height / 2);
+
+                SDL_CreateRenderer;
             }
+
 
             ~cGameManager()
             {
                 delete ball;
                 delete player1;
                 delete player2;
+
+                SDL_DestroyRenderer;
             }
 
             void ScoreUp(cPaddle* player)
@@ -340,6 +347,8 @@ class cGameManager
 
             void Game()
             {
+                SDL_CreateWindow;
+
                 std::cout << "Player1: ";
 
                 std::cin >> p1;
@@ -367,11 +376,15 @@ class cGameManager
 
 int main()
 {
+    SDL_Init;
+
     srand(time(0));
 
     cGameManager c;
     
     c.Game();
+
+    SDL_Quit;
 
     return 0;
 }
