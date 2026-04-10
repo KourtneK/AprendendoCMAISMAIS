@@ -60,11 +60,13 @@ int main(int argc, char *argv[])
     gravidade = 0.3f;
 
     float squarePeso;
-    squarePeso = 0.0f;
-    squarePeso += gravidade;
+    squarePeso = 1.0f;
 
     float velocidade;
     velocidade = 0.0f;
+
+    bool state;
+    state = false;
 
     while (winOpen)
     {
@@ -78,12 +80,10 @@ int main(int argc, char *argv[])
 
         const bool* keyState = SDL_GetKeyboardState(NULL); // verifica o estado de todas as teclas (0 para solta | 1 para pressionada)
 
-        if (keyState[SDL_SCANCODE_UP]) square.y -= 5.0f;
-        if (keyState[SDL_SCANCODE_SPACE]) square.y -= 5.0f;
+        // if (keyState[SDL_SCANCODE_UP]) square.y -= 5.0f;
         if (keyState[SDL_SCANCODE_DOWN]) square.y += 5.0f;
         if (keyState[SDL_SCANCODE_LEFT]) square.x -= 5.0f;
         if (keyState[SDL_SCANCODE_RIGHT]) square.x += 5.0f;
-
 
         // 3. Chama o renderizador escolhe a cor para a tela (RGB(vermelho, verde, azul), Opacidade)
         // Verde escuro(0, 140, 0, 255)
@@ -116,18 +116,33 @@ int main(int argc, char *argv[])
         SDL_RenderPresent(render);
 
         // Gravidade
-        velocidade += gravidade;
+        velocidade = velocidade + (gravidade * squarePeso);
+
+        // Limitador de velocidade de queda
+        if (velocidade > 10.0f)
+        { 
+            velocidade = 10.0f; 
+        }
+
+        // Incremento da velocidade
         square.y += velocidade;
 
         // Colisão do quadrado com o CHÃO
         if (square.y + square.h >= chao.y)
         {
             square.y = chao.y - square.h;
-            
-            if (velocidade > 5.0f)
-            {
-                velocidade = gravidade;
-            }               
+
+            velocidade = 0.0f;
+
+            state = true;
+        }
+
+        // Força pra cima, ao em vez de mudar diretamente as coordenadas
+        if (keyState[SDL_SCANCODE_UP] && state)
+        {
+            velocidade = -5.0f;
+
+            state = false;  
         }
 
         // Colisão do quadrdo com o TETO
@@ -142,15 +157,11 @@ int main(int argc, char *argv[])
             square.x = paredeEsquerda.x + paredeEsquerda.w;
         }
         
-
         // Colisão com a PAREDE DIREITA
         if (square.x + square.w >= paredeDireita.x)
         {
             square.x = paredeDireita.x - square.w;
         }
-
-
-
 
         SDL_Delay(16); // tempo de resposta da janela ~60 fps
     }
@@ -159,8 +170,7 @@ int main(int argc, char *argv[])
     SDL_DestroyWindow(window); // Destroi a janela (fecha a janela)
     SDL_Quit(); // Para o motor de renderização da lib SDL3
 
-
-
+    
 
     return 0;
 }
