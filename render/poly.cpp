@@ -4,7 +4,8 @@
 #include <SDL3/SDL_main.h>
 #include <time.h>
 #include <float.h>
-
+#include <vector>
+#include "colision.h"
 
 // ENTENDENDO A LIB SDL3
 
@@ -20,7 +21,7 @@ int main(int argc, char *argv[])
     // Título da janela, Largura, Altura, "Flags" (não sei o que são flags)
     // SDL_WINDOW_RESIZABLE: Permite puxar as bordas para aumentar a janela.
     // SDL_WINDOW_MAXIMIZED: Inicia a janela já ocupando a tela toda.
-    SDL_CreateWindowAndRenderer("Ola", 640, 480, SDL_WINDOW_RESIZABLE, &window, &render);
+    SDL_CreateWindowAndRenderer("Poly Game", 640, 480, SDL_WINDOW_RESIZABLE, &window, &render);
 
     // 6. Loop de eventos para manter a janela aberta e funcional
     bool winOpen = true;
@@ -32,6 +33,16 @@ int main(int argc, char *argv[])
         square.w = 50.0f;
         square.h = 50.0f;
 
+    SDL_FRect triangle; // Triangulo
+        triangle.x = 220.0f;
+        triangle.h = 340.0f;
+        triangle.y = 340.0f;
+        triangle.w = 50.0f;
+
+        float triangleBase;
+        triangleBase = triangle.y + triangle.h;
+
+
     SDL_FRect chao; // Chão
         chao.x = 0.0f;
         chao.y = 450.0f;
@@ -40,7 +51,7 @@ int main(int argc, char *argv[])
 
     SDL_FRect teto; // Teto
         teto.x = 0.0f;
-        teto.y = 10.0f;
+        teto.y = 6.0f;
         teto.w = 640.0f;
         teto.h = 50.0f;
 
@@ -55,6 +66,11 @@ int main(int argc, char *argv[])
         paredeEsquerda.y = 0.0f;
         paredeEsquerda.w = 50.0f;
         paredeEsquerda.h = 490.0f;
+
+    std::vector <SDL_FRect> paredes;
+    paredes.push_back(teto);
+    paredes.push_back(paredeDireita);
+    paredes.push_back(paredeEsquerda);
 
     float gravidade;
     gravidade = 0.3f;
@@ -76,14 +92,23 @@ int main(int argc, char *argv[])
             {
                 winOpen = false;
             }
+
+            // Sair com 'esc'
+            if (evento.type == SDL_EVENT_KEY_DOWN)
+            {
+                if (evento.key.key == SDLK_ESCAPE)
+                {
+                    winOpen = false;
+                }
+            }
         }
 
         const bool* keyState = SDL_GetKeyboardState(NULL); // verifica o estado de todas as teclas (0 para solta | 1 para pressionada)
 
-        // if (keyState[SDL_SCANCODE_UP]) square.y -= 5.0f;
-        if (keyState[SDL_SCANCODE_DOWN]) square.y += 5.0f;
-        if (keyState[SDL_SCANCODE_LEFT]) square.x -= 5.0f;
-        if (keyState[SDL_SCANCODE_RIGHT]) square.x += 5.0f;
+        float oldX;
+        float oldY;
+        oldX = square.x;
+        oldY = square.y;
 
         // 3. Chama o renderizador escolhe a cor para a tela (RGB(vermelho, verde, azul), Opacidade)
         // Verde escuro(0, 140, 0, 255)
@@ -115,6 +140,11 @@ int main(int argc, char *argv[])
         // 5. Mostra tudo na tela
         SDL_RenderPresent(render);
 
+        // Movimento. Muda as coordenadas diretamente com as setas
+        if (keyState[SDL_SCANCODE_DOWN]) square.y += 5.0f;
+        if (keyState[SDL_SCANCODE_LEFT]) square.x -= 5.0f;
+        if (keyState[SDL_SCANCODE_RIGHT]) square.x += 5.0f;
+
         // Gravidade
         velocidade = velocidade + (gravidade * squarePeso);
 
@@ -127,42 +157,26 @@ int main(int argc, char *argv[])
         // Incremento da velocidade
         square.y += velocidade;
 
-        // Colisão do quadrado com o CHÃO
-        if (square.y + square.h >= chao.y)
+        // Colisão com as PAREDES ESQUERDA E DIREITA
+        for (const auto& parede : paredes)
         {
-            square.y = chao.y - square.h;
-
-            velocidade = 0.0f;
-
-            state = true;
+            Colision::colisaoX(square, parede, oldX);   
         }
 
-        // Força pra cima, ao em vez de mudar diretamente as coordenadas
-        if (keyState[SDL_SCANCODE_UP] && state)
+        // Colisão do TETO e CHÃO
+        for (const auto& v : {chao, teto})
         {
-            velocidade = -5.0f;
+           Colision::colisaoY(square, v, oldY, velocidade, state);
 
-            state = false;  
-        }
-
-        // Colisão do quadrdo com o TETO
-        if (square.y <= teto.y + teto.h)
-        {
-            square.y = teto.y + teto.h;
-        }
-
-        // Colisão com a PAREDE ESQUERDA
-        if (square.x <= paredeEsquerda.x + paredeEsquerda.w)
-        {
-            square.x = paredeEsquerda.x + paredeEsquerda.w;
+           if (keyState[SDL_SCANCODE_UP] && state) 
+           {
+                velocidade = -6.0f;
+                state = false;
+            }
         }
         
-        // Colisão com a PAREDE DIREITA
-        if (square.x + square.w >= paredeDireita.x)
-        {
-            square.x = paredeDireita.x - square.w;
-        }
 
+        
         SDL_Delay(16); // tempo de resposta da janela ~60 fps
     }
 
