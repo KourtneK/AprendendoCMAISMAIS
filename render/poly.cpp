@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
     bool winOpen = true;
     SDL_Event evento;
 
+    // Variavel global de gravidade
     float gravidade;
     gravidade = 0.3f;
 
@@ -46,60 +47,21 @@ int main(int argc, char *argv[])
         square.peso = 1.0f;
         square.state = false;
 
-    Objetos triangle; // Definição de formato, peso e estado do triangulo
-        triangle.rect = {220.0f, -240.0f, 50.0f, 50.0f};
-        triangle.peso = 3.0f;
-        triangle.state = false;
-
-    SDL_Vertex vertice[3]; // Vertices do triangulo
-
-        // Primeiro vertice
-        vertice[0].position.x = triangle.rect.x + (triangle.rect.w / 2.0f);
-        vertice[0].position.y = triangle.rect.y;
-        vertice[0].color = {1.0f, 0.5f, 0.0f, 1.0f}; // Cor do vertice
-        vertice[0].tex_coord = {0.0f, 0.0f}; // Não sei
-
-        // Primeiro vertice
-        vertice[1].position.x = triangle.rect.x;
-        vertice[1].position.y = triangle.rect.y + triangle.rect.h;
-        vertice[1].color = {1.0f, 0.5f, 0.0f, 1.0f};
-        vertice[1].tex_coord = {0.0f, 0.0f};
-
-        // Primeiro vertice
-        vertice[2].position.x = triangle.rect.x + triangle.rect.w;
-        vertice[2].position.y = triangle.rect.y + triangle.rect.h;
-        vertice[2].color = {1.0f, 0.5f, 0.0f, 1.0f};
-        vertice[2].tex_coord = {0.0f, 0.0f};
-
     // Retangulos
     SDL_FRect chao; // Chão
         chao.x = 0.0f;
         chao.y = 450.0f;
         chao.w = 640.0f;
         chao.h = 50.0f;
-
-    SDL_FRect teto; // Teto
-        teto.x = 0.0f;
-        teto.y = 6.0f;
-        teto.w = 640.0f;
-        teto.h = 50.0f;
-
-    SDL_FRect paredeDireita; // Parede direita
-        paredeDireita.x = 570.0f;
-        paredeDireita.y = 0.0f;
-        paredeDireita.w = 50.0f;
-        paredeDireita.h = 490.0f;
-
-    SDL_FRect paredeEsquerda; // Parede esquerda
-        paredeEsquerda.x = 0.0f;
-        paredeEsquerda.y = 0.0f;
-        paredeEsquerda.w = 50.0f;
-        paredeEsquerda.h = 490.0f;
+    
+    SDL_FRect teto = {0.0f, 0.0f, 640.0f, 50.0f};
+    SDL_FRect paredeDireita = {570.0f, 0.0f, 50.0f, 490.0f};
+    SDL_FRect paredeEsquerda = {0.0f, 0.0f, 50.0f, 490.0f};
 
     std::vector <SDL_FRect> paredes;
-    paredes.push_back(teto);
-    paredes.push_back(paredeDireita);
-    paredes.push_back(paredeEsquerda);
+        paredes.push_back(teto) {0.0f, 0.6f, 640.0f, 50.0f};
+        paredes.push_back(paredeDireita) {570.0f, 0.0f, 50.0f, 490.0f};
+        paredes.push_back(paredeEsquerda) {0.0f, 0.0f, 50.0f, 490.0f};
 
     while (winOpen)
     {
@@ -154,9 +116,6 @@ int main(int argc, char *argv[])
         SDL_SetRenderDrawColor(render, 0, 0, 140, 255);
         SDL_RenderFillRect(render, &square.rect);
 
-        // Renderiza o triangulo na tela usano 'RenderGeometry'
-        SDL_RenderGeometry(render, nullptr, vertice, 3, nullptr, 0);
-
         // 5. Mostra tudo na tela
         SDL_RenderPresent(render);
 
@@ -167,48 +126,36 @@ int main(int argc, char *argv[])
 
         // Velocidade de queda
         square.velocidade = square.velocidade + (gravidade * square.peso);
-        triangle.velocidade = triangle.velocidade + (gravidade * triangle.peso);
 
         // Limitador de velocidade de queda
-        // Do quadrado
         if (square.velocidade > 10.0f)
-        { 
+        {
             square.velocidade = 10.0f; 
-        }
-
-        // Do triangulo
-        if (triangle.velocidade > 10.0f)
-        { 
-            triangle.velocidade = 10.0f; 
         }
 
         // Incremento da velocidade
         square.rect.y += square.velocidade; // Do quadrado
 
-        square.rect.y += square.velocidade; // Do triangulo
-
         // Colisão com as PAREDES ESQUERDA E DIREITA
         for (const auto& parede : paredes)
         {
             Colision::colisaoX(square.rect, parede, oldX); // quadrado
-            Colision::colisaoX(triangle.rect, parede, oldX); // triangulo
         }
 
-        // Colisão do TETO e CHÃO
-        for (const auto& v : {chao, teto})
-        {
-            Colision::colisaoY(square.rect, v, oldY, square.velocidade, square.state); // quadrado
-            Colision::colisaoY(triangle.rect, v, oldY, triangle.velocidade, triangle.state); // triangulo
-
-           if (keyState[SDL_SCANCODE_UP] && square.state) 
-           {
+        if (keyState[SDL_SCANCODE_UP] && square.state) 
+            {
                 square.velocidade = -6.0f;
                 square.state = false;
             }
-        }
-        
 
-        
+        // Colisão do TETO e CHÃO
+        for (const auto& vito : {chao, teto})
+        {
+            Colision::colisaoY(square.rect, vito, oldY, square.velocidade, square.state); // quadrado
+        }
+
+
+
         SDL_Delay(16); // tempo de resposta da janela ~60 fps
     }
 
@@ -216,7 +163,7 @@ int main(int argc, char *argv[])
     SDL_DestroyWindow(window); // Destroi a janela (fecha a janela)
     SDL_Quit(); // Para o motor de renderização da lib SDL3
 
-    
+
 
     return 0;
 }
