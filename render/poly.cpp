@@ -9,6 +9,20 @@
 
 // ENTENDENDO A LIB SDL3
 
+// SDL_WINDOW_RESIZABLE: Permite puxar as bordas para aumentar a janela.
+// SDL_WINDOW_MAXIMIZED: Inicia a janela já ocupando a tela toda.
+
+// Variaveis globais de estrutura de objetos
+struct Objetos
+{
+    SDL_FRect rect;
+    float peso;
+    float velocidadeY;
+    float velocidadeX;
+
+    bool state;
+};
+
 int main(int argc, char *argv[])
 {
     // 1. Liga o render de video
@@ -19,8 +33,6 @@ int main(int argc, char *argv[])
     SDL_Renderer* render = nullptr;
 
     // Título da janela, Largura, Altura, "Flags" (não sei o que são flags)
-    // SDL_WINDOW_RESIZABLE: Permite puxar as bordas para aumentar a janela.
-    // SDL_WINDOW_MAXIMIZED: Inicia a janela já ocupando a tela toda.
     SDL_CreateWindowAndRenderer("Poly Game", 640, 480, SDL_WINDOW_RESIZABLE, &window, &render);
 
     // 6. Loop de eventos para manter a janela aberta e funcional
@@ -31,37 +43,28 @@ int main(int argc, char *argv[])
     float gravidade;
     gravidade = 0.3f;
 
-    // Variaveis globais de estrutura de objetos
-    struct Objetos
-    {
-        SDL_FRect rect;
-            float peso;
-            float velocidade;
-
-            bool state;
-    };
+    // Variavel global para inercia/atrito
+    float inercia;
+    inercia = 0.8f;
 
     // Definição dos objetos
     Objetos square; // Definição de formato, peso e estado do quadrado
         square.rect = {220.0f, 340.0f, 50.0f, 50.0f};
         square.peso = 1.0f;
-        square.state = false;
-
-    // Retangulos
-    SDL_FRect chao; // Chão
-        chao.x = 0.0f;
-        chao.y = 450.0f;
-        chao.w = 640.0f;
-        chao.h = 50.0f;
+        square.velocidadeY = 0.0f;
+        square.velocidadeX = 0.0f;
+        square.state = false;    
     
-    SDL_FRect teto = {0.0f, 0.0f, 640.0f, 50.0f};
-    SDL_FRect paredeDireita = {570.0f, 0.0f, 50.0f, 490.0f};
-    SDL_FRect paredeEsquerda = {0.0f, 0.0f, 50.0f, 490.0f};
+    SDL_FRect chao = {0.0f, 450.0f, 640.0f, 50.0f}; // X, Y, W, H    
+    SDL_FRect teto = {0.0f, 0.0f, 640.0f, 50.0f}; // X, Y, W, H
+    SDL_FRect paredeDireita = {590.0f, 0.0f, 50.0f, 490.0f}; // X, Y, W, H
+    SDL_FRect paredeEsquerda = {0.0f, 0.0f, 50.0f, 490.0f}; // X, Y, W, H
 
     std::vector <SDL_FRect> paredes;
-        paredes.push_back(teto) {0.0f, 0.6f, 640.0f, 50.0f};
-        paredes.push_back(paredeDireita) {570.0f, 0.0f, 50.0f, 490.0f};
-        paredes.push_back(paredeEsquerda) {0.0f, 0.0f, 50.0f, 490.0f};
+        paredes.push_back(chao);
+        paredes.push_back(teto);
+        paredes.push_back(paredeDireita);
+        paredes.push_back(paredeEsquerda);
 
     while (winOpen)
     {
@@ -96,22 +99,13 @@ int main(int argc, char *argv[])
         // 4. Seta a cor escolhida na tela inteira
         SDL_RenderClear(render);
 
-        // Renderiza o CHÃO
+        // Renderiza paredes, teto, e chão
         SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
-        SDL_RenderFillRect(render, &chao);
-
-        // Renderiza o TETO
-        SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
-        SDL_RenderFillRect(render, &teto);
-
-        // Renderiza a PAREDE DIREITA
-        SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
-        SDL_RenderFillRect(render, &paredeDireita);
-
-        // Renderiza a PAREDE ESQUERDA
-        SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
-        SDL_RenderFillRect(render, &paredeEsquerda);
-
+        for (const auto& parede : paredes)
+        {
+            SDL_RenderFillRect(render, &parede);
+        }
+        
         // Seta a cor do quadrado e renderiza ele na tela
         SDL_SetRenderDrawColor(render, 0, 0, 140, 255);
         SDL_RenderFillRect(render, &square.rect);
@@ -119,22 +113,30 @@ int main(int argc, char *argv[])
         // 5. Mostra tudo na tela
         SDL_RenderPresent(render);
 
-        // Movimento. Muda as coordenadas diretamente com as setas
-        if (keyState[SDL_SCANCODE_DOWN]) square.rect.y += 5.0f;
-        if (keyState[SDL_SCANCODE_LEFT]) square.rect.x -= 5.0f;
-        if (keyState[SDL_SCANCODE_RIGHT]) square.rect.x += 5.0f;
-
         // Velocidade de queda
-        square.velocidade = square.velocidade + (gravidade * square.peso);
+        square.velocidadeY = square.velocidadeY + (gravidade * square.peso);
 
-        // Limitador de velocidade de queda
-        if (square.velocidade > 10.0f)
+        // Incremento da velocidadeX e Y
+        square.rect.y += square.velocidadeY;
+        square.rect.x += square.velocidadeX;
+
+        // Limitador de velocidadeY
+        if (square.velocidadeY > 10.0f)
         {
-            square.velocidade = 10.0f; 
+            square.velocidadeY = 10.0f;
+        }
+        
+        // Limitador de velocidade+X
+        if (square.velocidadeX > 5.0f)
+        {
+            square.velocidadeX = 5.0f;
         }
 
-        // Incremento da velocidade
-        square.rect.y += square.velocidade; // Do quadrado
+        // Limitador de velocidade-X
+        if (square.velocidadeX < -5.0f)
+        {
+            square.velocidadeX = -5.0f;
+        }
 
         // Colisão com as PAREDES ESQUERDA E DIREITA
         for (const auto& parede : paredes)
@@ -142,17 +144,43 @@ int main(int argc, char *argv[])
             Colision::colisaoX(square.rect, parede, oldX); // quadrado
         }
 
-        if (keyState[SDL_SCANCODE_UP] && square.state) 
+        // Força aplicada em '-X'
+        if (keyState[SDL_SCANCODE_LEFT])
+        {
+            if (square.velocidadeX > 0) // Atrito infinito
             {
-                square.velocidade = -6.0f;
-                square.state = false;
+                square.velocidadeX = 0;
             }
 
-        // Colisão do TETO e CHÃO
-        for (const auto& vito : {chao, teto})
-        {
-            Colision::colisaoY(square.rect, vito, oldY, square.velocidade, square.state); // quadrado
+            square.velocidadeX = square.velocidadeX - (inercia * square.peso);
         }
+        // Força aplicada em '+X'
+        else if (keyState[SDL_SCANCODE_RIGHT])
+        {
+            if (square.velocidadeX < 0)
+            {
+                square.velocidadeX = 0;
+            }   
+
+            square.velocidadeX = square.velocidadeX + (inercia * square.peso);
+        }
+        else // Se soltar left/right zera a velocidade
+        {
+            square.velocidadeX = 0.0f;
+        }
+        
+        // Colisão do TETO
+        for (const auto& vito : paredes)
+        {
+            Colision::colisaoY(square.rect, vito, oldY, square.velocidadeY, square.state); // quadrado
+        }
+
+        // Força aplicada em '-Y' ( tem que ser iniciada depois da col)
+        if (keyState[SDL_SCANCODE_UP] && square.state) 
+            {
+                square.velocidadeY = -5.0f;
+                square.state = false;
+            }
 
 
 
