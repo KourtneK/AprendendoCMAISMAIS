@@ -56,7 +56,9 @@ int main(int argc, char *argv[])
         square.peso = 1.0f;
         square.velocidadeY = 0.0f;
         square.velocidadeX = 0.0f;
+        square.qntPulos = 0;
         square.state = false;
+        square.stateKeyHold = false;
     
     
     SDL_FRect chao = {0.0f, 450.0f, 640.0f, 50.0f}; // X, Y, W, H    
@@ -182,8 +184,14 @@ int main(int argc, char *argv[])
         // Força aplicada em '-Y' ( tem que ser iniciada depois da col)
         if (keyState[SDL_SCANCODE_UP] && square.state)
         {
-            square.velocidadeY = -5.0f;
-            square.state = false;
+            if (!square.stateKeyHold)
+            {
+                square.velocidadeY = -5.0f;
+                square.qntPulos = 1;
+                square.state = false;   
+            }
+
+
         }
 
 
