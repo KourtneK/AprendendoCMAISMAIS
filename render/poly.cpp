@@ -20,7 +20,10 @@ struct Objetos
     float velocidadeY;
     float velocidadeX;
 
+    int qntPulos;
+
     bool state;
+    bool stateKeyHold;
 };
 
 int main(int argc, char *argv[])
@@ -45,7 +48,7 @@ int main(int argc, char *argv[])
 
     // Variavel global para inercia/atrito
     float inercia;
-    inercia = 0.8f;
+    inercia = 1.0f;
 
     // Definição dos objetos
     Objetos square; // Definição de formato, peso e estado do quadrado
@@ -53,7 +56,8 @@ int main(int argc, char *argv[])
         square.peso = 1.0f;
         square.velocidadeY = 0.0f;
         square.velocidadeX = 0.0f;
-        square.state = false;    
+        square.state = false;
+    
     
     SDL_FRect chao = {0.0f, 450.0f, 640.0f, 50.0f}; // X, Y, W, H    
     SDL_FRect teto = {0.0f, 0.0f, 640.0f, 50.0f}; // X, Y, W, H
@@ -176,11 +180,11 @@ int main(int argc, char *argv[])
         }
 
         // Força aplicada em '-Y' ( tem que ser iniciada depois da col)
-        if (keyState[SDL_SCANCODE_UP] && square.state) 
-            {
-                square.velocidadeY = -5.0f;
-                square.state = false;
-            }
+        if (keyState[SDL_SCANCODE_UP] && square.state)
+        {
+            square.velocidadeY = -5.0f;
+            square.state = false;
+        }
 
 
 
