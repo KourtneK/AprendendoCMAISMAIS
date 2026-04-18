@@ -60,17 +60,45 @@ int main(int argc, char *argv[])
         square.state = false;
         square.stateKeyHold = false;
     
-    
+    // Definição de paredes, chão e teto
     SDL_FRect chao = {0.0f, 450.0f, 640.0f, 50.0f}; // X, Y, W, H    
     SDL_FRect teto = {0.0f, 0.0f, 640.0f, 50.0f}; // X, Y, W, H
     SDL_FRect paredeDireita = {590.0f, 0.0f, 50.0f, 490.0f}; // X, Y, W, H
     SDL_FRect paredeEsquerda = {0.0f, 0.0f, 50.0f, 490.0f}; // X, Y, W, H
 
+    //definição de paredes, chão e teto como objetos vetoriais
     std::vector <SDL_FRect> paredes;
         paredes.push_back(chao);
         paredes.push_back(teto);
         paredes.push_back(paredeDireita);
         paredes.push_back(paredeEsquerda);
+
+    // Definição da textura
+    SDL_Surface* surfaceSquare;
+    SDL_Surface* surfaceWall;
+    surfaceSquare = SDL_LoadBMP("pigui.bmp");
+    surfaceWall = SDL_LoadBMP("tijolo.bmp");
+
+    // tenta carregar a textura, se falhar retorna um log de erro
+    if (!surfaceSquare)
+    {
+        SDL_Log("erro ao carregar bmp: %s", SDL_GetError());
+    }
+
+    if (!surfaceWall)
+    {
+        SDL_Log("erro ao carregar bmp: %s", SDL_GetError());
+    }
+    
+    // Defininto imagens bmp como textura
+    SDL_Texture* squareTexture;
+    SDL_Texture* wallTexture;
+    squareTexture = SDL_CreateTextureFromSurface(render, surfaceSquare);
+    wallTexture = SDL_CreateTextureFromSurface(render, surfaceWall);
+
+    // Limpa as texturas da memoria ram
+    SDL_DestroySurface(surfaceSquare);
+    SDL_DestroySurface(surfaceWall);
 
     while (winOpen)
     {
@@ -98,34 +126,6 @@ int main(int argc, char *argv[])
         oldX = square.rect.x;
         oldY = square.rect.y;
 
-        // 3. Chama o renderizador escolhe a cor para a tela (RGB(vermelho, verde, azul), Opacidade)
-        // Verde escuro(0, 140, 0, 255)
-        SDL_SetRenderDrawColor(render, 0, 140, 0, 255);
-
-        // 4. Seta a cor escolhida na tela inteira
-        SDL_RenderClear(render);
-
-        // Renderiza paredes, teto, e chão
-        SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
-        for (const auto& parede : paredes)
-        {
-            SDL_RenderFillRect(render, &parede);
-        }
-        
-        // Seta a cor do quadrado e renderiza ele na tela
-        SDL_SetRenderDrawColor(render, 0, 0, 140, 255);
-        SDL_RenderFillRect(render, &square.rect);
-
-        // 5. Mostra tudo na tela
-        SDL_RenderPresent(render);
-
-        // Velocidade de queda
-        square.velocidadeY = square.velocidadeY + (gravidade * square.peso);
-
-        // Incremento da velocidadeX e Y
-        square.rect.y += square.velocidadeY;
-        square.rect.x += square.velocidadeX;
-
         // Limitador de velocidadeY
         if (square.velocidadeY > 10.0f)
         {
@@ -142,12 +142,6 @@ int main(int argc, char *argv[])
         if (square.velocidadeX < -5.0f)
         {
             square.velocidadeX = -5.0f;
-        }
-
-        // Colisão com as PAREDES ESQUERDA E DIREITA
-        for (const auto& parede : paredes)
-        {
-            Colision::colisaoX(square.rect, parede, oldX); // quadrado
         }
 
         // Força aplicada em '-X'
@@ -174,28 +168,73 @@ int main(int argc, char *argv[])
         {
             square.velocidadeX = 0.0f;
         }
-        
-        // Colisão do TETO
-        for (const auto& vito : paredes)
+
+        // Velocidade de queda
+        square.velocidadeY = square.velocidadeY + (gravidade * square.peso);
+
+        // Incremento da velocidadeX e Y
+        square.rect.y += square.velocidadeY;
+        square.rect.x += square.velocidadeX;
+
+        // Colisão com as paredes, chão e teto
+        for (const auto& parede : paredes)
         {
-            Colision::colisaoY(square.rect, vito, oldY, square.velocidadeY, square.state); // quadrado
+            Colision::colisaoX(square.rect, parede, oldX);
+            Colision::colisaoY(square.rect, parede, oldY, square.velocidadeY, square.state);
         }
 
         // Força aplicada em '-Y' ( tem que ser iniciada depois da col)
-        if (keyState[SDL_SCANCODE_UP] && square.state)
+        if (keyState[SDL_SCANCODE_UP])
         {
             if (!square.stateKeyHold)
             {
-                square.velocidadeY = -5.0f;
-                square.qntPulos = 1;
-                square.state = false;   
+                if (square.state)
+                {
+                    square.velocidadeY = -5.0f;
+                    square.state = false;
+                    square.qntPulos = 1;
+                }
+                else if (square.qntPulos > 0)
+                {
+                    square.velocidadeY = -5.0f;
+                    square.qntPulos = 0;
+                }
             }
 
+            square.stateKeyHold = true;
 
         }
+        else
+        {
+            square.stateKeyHold = false;
+        }
 
+        // 3. Chama o renderizador escolhe a cor para a tela (RGB(vermelho, verde, azul), Opacidade)
+        // Verde escuro(0, 140, 0, 255)
+        SDL_SetRenderDrawColor(render, 0, 140, 0, 255);
 
+        // 4. Seta a cor escolhida na tela inteira
+        SDL_RenderClear(render);
 
+        // Renderiza a textura de paredes, teto, e chão
+        SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
+        for (const auto& parede : paredes)
+        {
+            SDL_RenderTexture(render, wallTexture, NULL, &parede);
+        }
+        
+        // Renderiza a textura
+        if (squareTexture != nullptr)
+        {
+            SDL_RenderTexture(render, squareTexture, NULL, &square.rect);
+        }
+        else // Se não conseguir renderizar a textura renderiza um quadrado azul
+        {
+            SDL_SetRenderDrawColor(render, 0, 0, 140, 255);
+            SDL_RenderFillRect(render, &square.rect);    
+        }
+        
+        SDL_RenderPresent(render);
         SDL_Delay(16); // tempo de resposta da janela ~60 fps
     }
 
