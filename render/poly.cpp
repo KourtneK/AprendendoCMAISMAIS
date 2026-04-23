@@ -1,10 +1,11 @@
 #include <iostream>
+#include <fstream>
 #include <string>
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_main.h>
+#include <vector>
 #include <time.h>
 #include <float.h>
-#include <vector>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
 #include "colision.h"
 
 // ENTENDENDO A LIB SDL3
@@ -68,10 +69,63 @@ int main(int argc, char *argv[])
 
     //definição de paredes, chão e teto como objetos vetoriais
     std::vector <SDL_FRect> paredes;
+        SDL_Surface* surfaceMapa = SDL_LoadBMP("tilemap.bmp");
+
+        if (surfaceMapa) 
+        {
+            // Garante que o formato de cor seja padrão para não dar erro de leitura
+            SDL_Surface* surfaceFormatada = SDL_ConvertSurface(surfaceMapa, SDL_PIXELFORMAT_RGBA8888);
+            SDL_DestroySurface(surfaceMapa);
+
+            if (surfaceFormatada) 
+            {
+                // Ponteiro para os dados crus dos pixels
+                Uint32* pixels = (Uint32*)surfaceFormatada->pixels;
+                const int largura = surfaceFormatada->w;
+                const int altura = surfaceFormatada->h;
+
+                for (int y = 0; y < altura; y++) 
+                {
+                    for (int x = 0; x < largura; x++) 
+                    {
+                        // A "mágica" vanilla para achar o pixel na memória linear
+                        Uint32 pixelCor = pixels[y * largura + x];
+                        Uint8 r, g, b, a;
+                        
+                        // Extrai as cores do pixel
+                        SDL_GetRGBA(pixelCor, SDL_GetPixelFormatDetails(surfaceFormatada->format), NULL, &r, &g, &b, &a);
+
+                        float posX = x * 50.0f;
+                        float posY = y * 50.0f;
+
+                        // Se o pixel for PRETO (0,0,0) -> Parede
+                        if (r == 0 && g == 0 && b == 0) 
+                        {
+                            paredes.push_back({posX, posY, 50.0f, 50.0f});
+                        }
+                        // Se o pixel for VERMELHO (255,0,0) -> Spawn do Player
+                        else if (r == 255 && g == 0 && b == 0) 
+                        {
+                            square.rect.x = posX;
+                            square.rect.y = posY;
+                        }
+                    }
+                }
+                SDL_DestroySurface(surfaceFormatada);
+            }
+        } 
+        else 
+        {
+            SDL_Log("ERRO: Nao encontrei o mapa.bmp na pasta!");
+        }
+
+
+        /*
         paredes.push_back(chao);
         paredes.push_back(teto);
         paredes.push_back(paredeDireita);
         paredes.push_back(paredeEsquerda);
+        */
 
     // Definição da textura
     SDL_Surface* surfaceSquare;
