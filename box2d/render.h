@@ -20,7 +20,7 @@ struct Renderizador
 
     bool running = true;
 
-    // 1. Inicializa o motor de vídeo e a janela (Suporte a bordas puxáveis)
+    // 1. Inicializa o motor de vídeo e a janela
     void winOpen(const char* titulo, int w, int h)
     {
         SDL_Init(SDL_INIT_VIDEO);
@@ -29,7 +29,7 @@ struct Renderizador
         SDL_CreateWindowAndRenderer(titulo, w, h, SDL_WINDOW_RESIZABLE, &window, &render);
     }
 
-    // Processa os eventos da janela e do teclado para saída
+    // Processa de saída
     void eventProcess()
     {
         SDL_Event evento;
@@ -134,7 +134,7 @@ struct Renderizador
         }
     }
 
-    // 6. Renderiza o Pinguim ou um retângulo azul se a imagem sumir
+    // 6. Renderiza a textura ou um retângulo azul se a imagem sumir
     void drawSquare(const SDL_FRect& rect)
     {
         if (squareTexture)

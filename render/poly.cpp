@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
         square.stateKeyHold = false;
     
     // Definição de paredes, chão e teto
-    SDL_FRect chao = {0.0f, 450.0f, 640.0f, 50.0f}; // X, Y, W, H    
+    SDL_FRect chao = {0.0f, 450.0f, 640.0f, 50.0f}; // X, Y, W, H
     SDL_FRect teto = {0.0f, 0.0f, 640.0f, 50.0f}; // X, Y, W, H
     SDL_FRect paredeDireita = {590.0f, 0.0f, 50.0f, 490.0f}; // X, Y, W, H
     SDL_FRect paredeEsquerda = {0.0f, 0.0f, 50.0f, 490.0f}; // X, Y, W, H
