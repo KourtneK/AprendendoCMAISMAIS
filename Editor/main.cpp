@@ -9,17 +9,21 @@
 #include <windows.h>
 
 
-char keyState;
+std::vector<std::string> buffer;
+
+char key;
 
 int main(int argc, char* argv[])
 {
-    system("cls");
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    size_t terminalWidth = csbi.srWindow.Right - csbi.srWindow.Left + 1;
 
-    std::vector<std::string> buffer;
-    
+    std::cout << "Largura do terminal: " << terminalWidth << "; " << "(Muda toda vez que voce redimensiona o terminal, sai e entra de novo no editor)" << std::endl;
+
+    std::cout << "Bem vindo ao editor;" << std::endl;
+
     buffer.push_back("");
-
-    char key;
 
     while (true)
     {
@@ -27,6 +31,7 @@ int main(int argc, char* argv[])
 
         if (key == 27)
         {
+            system("cls");
             break;
             
         }
@@ -38,12 +43,27 @@ int main(int argc, char* argv[])
                 buffer.back().pop_back();
 
                 std::cout << "\b \b";
+
+            }
+
+            else if (buffer.back().empty() <= terminalWidth)
+            {
+               
             
             }
+
         }
 
         if (key >= 32 && key <= 126)
         {
+            if (buffer.back().length() >= terminalWidth)
+            {
+               std::cout << '\n';
+
+               buffer.push_back("");
+            
+            }
+
             buffer.back() += key;
 
             std::cout << key;
