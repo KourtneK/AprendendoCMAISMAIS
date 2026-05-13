@@ -6,8 +6,7 @@
 #include <float.h>
 #include <conio.h>
 #include <fstream>
-#include <windows.h>
-
+#include <windows.h> 
 
 std::vector<std::string> buffer;
 
@@ -46,9 +45,13 @@ int main(int argc, char* argv[])
 
             }
 
-            else if (buffer.back().empty() <= terminalWidth)
+            else if (buffer.back().empty() <= terminalWidth | buffer.size() > 1)
             {
-               
+                buffer.pop_back();
+                
+                std::cout << "\033[A" << std::endl;
+
+                std::cout << "\033[" << buffer.back().length() + 1 << "G";
             
             }
 
