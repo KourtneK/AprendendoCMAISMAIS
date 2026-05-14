@@ -28,6 +28,12 @@ int main(int argc, char* argv[])
 
     if (argc > 0)
         {
+            if ()
+            {
+                
+            
+            }
+
             std::ifstream arquivo(argv[1]);
 
             if (arquivo.is_open())
@@ -37,6 +43,7 @@ int main(int argc, char* argv[])
                 std::getline(arquivo, linhas);
             
             }
+
 
         }
 
