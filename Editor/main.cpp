@@ -24,10 +24,26 @@ int main(int argc, char* argv[])
 
     buffer.push_back("");
 
+    std::ifstream* linhas;
+
+    if (argc > 0)
+        {
+            std::ifstream arquivo(argv[1]);
+
+            if (arquivo.is_open())
+            {
+                std::ofstream arquivo(argv[1]);
+
+                std::getline(arquivo, linhas);
+            
+            }
+
+        }
+
     while (true)
     {
         key = _getch();
-
+        
         if (key == 27)
         {
             system("cls");
@@ -45,11 +61,11 @@ int main(int argc, char* argv[])
 
             }
 
-            else if (buffer.back().empty() <= terminalWidth | buffer.size() > 1)
+            else if (buffer.size() > 1)
             {
                 buffer.pop_back();
-                
-                std::cout << "\033[A" << std::endl;
+
+                std::cout << "\033[A";
 
                 std::cout << "\033[" << buffer.back().length() + 1 << "G";
             
