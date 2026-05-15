@@ -1,16 +1,13 @@
-#include <consoleapi2.h>
 #include <iostream>
 #include <fstream>
 #include <ostream>
-#include <processenv.h>
 #include <string>
 #include <vector>
 #include <time.h>
 #include <float.h>
 #include <conio.h>
 #include <fstream>
-#include <wincontypes.h>
-#include <windows.h> 
+#include <windows.h>
 
 
 std::vector<std::string> buffer;
@@ -21,14 +18,17 @@ int main(int argc, char* argv[])
 {
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    SHORT cursorInicialPosX;
+    SHORT cursorInicialPosY;
+    cursorInicialPosX = csbi.dwCursorPosition.X;
+    cursorInicialPosY = csbi.dwCursorPosition.Y;
     size_t terminalWidth = csbi.srWindow.Right - csbi.srWindow.Left + 1;
 
-
-
-    std::cout << "Largura do terminal: " << terminalWidth << "; " << "(Muda toda vez que voce redimensiona o terminal, sai e entra de novo no editor)" << std::endl;
+    std::cout << "Largura do terminal: " << terminalWidth << "; " 
+            << "(Muda toda vez que voce redimensiona o terminal, " 
+            << "sai e entra de novo no editor)" << std::endl;
+    std::cout << "Cursor: X=" << csbi.dwCursorPosition.X << " Y=" << csbi.dwCursorPosition.Y << std::endl;
     std::cout << "Bem vindo ao editor;" << '\n' << std::endl;
-
-    std::ifstream* linhas;
 
     if (argc > 1)
         {
@@ -57,8 +57,18 @@ int main(int argc, char* argv[])
         return 0;
     }
 
+    for (const std::string& linha : buffer)
+    {
+        std::cout << linha << '\n';
+    }
+
     while (true)
     {
+        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+        bool inEditor = csbi.dwCursorPosition.Y > cursorInicialPosY || 
+            (csbi.dwCursorPosition.Y == cursorInicialPosY && csbi.dwCursorPosition.X > cursorInicialPosX);
+
+
         key = _getch();
         
         if (key == 27)
@@ -81,7 +91,9 @@ int main(int argc, char* argv[])
 
         if (key == 8)
         {
-            if (!buffer.back().empty())
+
+
+            if (!buffer.back().empty() && inEditor)
             {
                 buffer.back().pop_back();
 
