@@ -1,12 +1,17 @@
+#include <consoleapi2.h>
 #include <iostream>
 #include <fstream>
+#include <ostream>
+#include <processenv.h>
 #include <string>
 #include <vector>
 #include <time.h>
 #include <float.h>
 #include <conio.h>
 #include <fstream>
+#include <wincontypes.h>
 #include <windows.h> 
+
 
 std::vector<std::string> buffer;
 
@@ -18,9 +23,10 @@ int main(int argc, char* argv[])
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
     size_t terminalWidth = csbi.srWindow.Right - csbi.srWindow.Left + 1;
 
-    std::cout << "Largura do terminal: " << terminalWidth << "; " << "(Muda toda vez que voce redimensiona o terminal, sai e entra de novo no editor)" << std::endl;
 
-    std::cout << "Bem vindo ao editor;" << std::endl;
+
+    std::cout << "Largura do terminal: " << terminalWidth << "; " << "(Muda toda vez que voce redimensiona o terminal, sai e entra de novo no editor)" << std::endl;
+    std::cout << "Bem vindo ao editor;" << '\n' << std::endl;
 
     std::ifstream* linhas;
 
@@ -35,26 +41,20 @@ int main(int argc, char* argv[])
                 while (std::getline(arquivo, linhas))
                 {
                     buffer.push_back(linhas);
-                
                 }
 
                 arquivo.close();
-
             }
             else
             {
                 buffer.push_back("");
-
             }
-
-
         }
     else
     {
         std::cout << "chame o editor e digite o nome do arquivo" << std::endl;
 
         return 0;
-
     }
 
     while (true)
@@ -70,16 +70,13 @@ int main(int argc, char* argv[])
                 for (const std::string& linhas : buffer)
                 {
                     arquivo << linhas << '\n';
-                
                 }
 
                 arquivo.close();
-            
             }
 
             system("cls");
             break;
-            
         }
 
         if (key == 8)
@@ -89,7 +86,6 @@ int main(int argc, char* argv[])
                 buffer.back().pop_back();
 
                 std::cout << "\b \b";
-
             }
 
             else if (buffer.size() > 1)
@@ -97,32 +93,32 @@ int main(int argc, char* argv[])
                 buffer.pop_back();
 
                 std::cout << "\033[A";
-
                 std::cout << "\033[" << buffer.back().length() + 1 << "G";
-            
             }
+        }
 
+        if (key == 13)
+        {
+            std::cout << '\n';
+
+            buffer.push_back("");
         }
 
         if (key >= 32 && key <= 126)
         {
             if (buffer.back().length() >= terminalWidth)
             {
-               std::cout << '\n';
+                std::cout << std::endl;
 
-               buffer.push_back("");
-            
+                buffer.push_back("");
             }
 
             buffer.back() += key;
 
             std::cout << key;
-       
         }
-    
     }
     
-
 
     return 0;
 }
