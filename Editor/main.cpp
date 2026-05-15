@@ -22,30 +22,40 @@ int main(int argc, char* argv[])
 
     std::cout << "Bem vindo ao editor;" << std::endl;
 
-    buffer.push_back("");
-
     std::ifstream* linhas;
 
-    if (argc > 0)
+    if (argc > 1)
         {
-            if ()
-            {
-                
-            
-            }
-
             std::ifstream arquivo(argv[1]);
 
             if (arquivo.is_open())
             {
-                std::ofstream arquivo(argv[1]);
+                std::string linhas;
 
-                std::getline(arquivo, linhas);
-            
+                while (std::getline(arquivo, linhas))
+                {
+                    buffer.push_back(linhas);
+                
+                }
+
+                arquivo.close();
+
+            }
+            else
+            {
+                buffer.push_back("");
+
             }
 
 
         }
+    else
+    {
+        std::cout << "chame o editor e digite o nome do arquivo" << std::endl;
+
+        return 0;
+
+    }
 
     while (true)
     {
@@ -53,6 +63,20 @@ int main(int argc, char* argv[])
         
         if (key == 27)
         {
+            std::ofstream arquivo(argv[1]);
+
+            if (arquivo.is_open())
+            {
+                for (const std::string& linhas : buffer)
+                {
+                    arquivo << linhas << '\n';
+                
+                }
+
+                arquivo.close();
+            
+            }
+
             system("cls");
             break;
             
