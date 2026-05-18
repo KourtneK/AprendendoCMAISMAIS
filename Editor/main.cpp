@@ -12,7 +12,10 @@
 
 std::vector<std::string> buffer;
 
-char key;
+int key;
+
+int cLinha;
+int cColuna;
 
 int main(int argc, char* argv[])
 {
@@ -62,6 +65,9 @@ int main(int argc, char* argv[])
         std::cout << linha << '\n';
     }
 
+    cColuna = buffer.back().length();
+    cLinha = buffer.size() - 1;
+
     while (true)
     {
         GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
@@ -89,10 +95,43 @@ int main(int argc, char* argv[])
             break;
         }
 
+        if (key == 224)
+        {
+            key = _getch();
+
+            if (key == 72 && csbi.dwCursorPosition.Y > cursorInicialPosY) // Seta pra cima
+            {
+                std::cout << "\033[A";
+
+                cLinha--;
+            }
+
+            if (key == 80 && cLinha < (int)buffer.size() - 1) // Seta pra baixo
+            {
+                std::cout << "\033[B";
+
+                cLinha++;
+            }
+
+            if (key == 75 && csbi.dwCursorPosition.X > 0) // Seta pra esquerda
+            {
+                std::cout << "\033[D";
+
+                cColuna--;
+            }
+
+            if (key == 77 && csbi.dwCursorPosition.X < buffer[cLinha].length()) // Seta pra direita
+            {
+                std::cout << "\033[C";
+
+                cColuna++;
+            }
+
+            continue;
+        }
+
         if (key == 8)
         {
-
-
             if (!buffer.back().empty() && inEditor)
             {
                 buffer.back().pop_back();
@@ -118,6 +157,8 @@ int main(int argc, char* argv[])
 
         if (key >= 32 && key <= 126)
         {
+            std::cout << "cLinha=" << cLinha << " buffer.size()=" << buffer.size() << std::endl;
+
             if (buffer.back().length() >= terminalWidth)
             {
                 std::cout << std::endl;
@@ -125,9 +166,10 @@ int main(int argc, char* argv[])
                 buffer.push_back("");
             }
 
-            buffer.back() += key;
+            buffer[cLinha].insert(cColuna, 1, (char)key);
+            cColuna++;
 
-            std::cout << key;
+            std::cout << (char)key;
         }
     }
     
