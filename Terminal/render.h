@@ -5,9 +5,11 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <time.h>
+#include <float.h>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-
+#include <box2d/box2d.h>
 
 struct Renderizador
 {

@@ -15,8 +15,12 @@ int main(int argc, char** argv)
     {
         renderer.eventProcess();
 
+        renderer.cleanScreen(0, 0, 0);
+
+        renderer.present();
 
     }
 
+    renderer.close();
     return 0;
 }
