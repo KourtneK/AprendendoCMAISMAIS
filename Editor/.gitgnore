@@ -1,8 +1,6 @@
 *.exe
 *.cpp
 
-*.txt
 
-!example.txt
 !main.cpp
-!example.cpp
+!ola.cpp
