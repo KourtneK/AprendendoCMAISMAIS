@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <ostream>
@@ -19,6 +20,8 @@ int cColuna;
 
 int main(int argc, char* argv[])
 {
+    system("cls");
+
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
     SHORT cursorInicialPosX;
@@ -31,7 +34,7 @@ int main(int argc, char* argv[])
             << "(Muda toda vez que 'voce redimensiona o terminal, " 
             << "sai e entra de novo no editor)" << std::endl;
     std::cout << "Cursor: X=" << csbi.dwCursorPosition.X << " Y=" << csbi.dwCursorPosition.Y << std::endl;
-    std::cout << "Bem vindo ao editor;" << '\n';
+    std::cout << "Bem vindo ao editor;" << '\n' << std::endl;
 
     if (argc > 1)
         {
@@ -67,6 +70,9 @@ int main(int argc, char* argv[])
 
     cColuna = buffer.back().length();
     cLinha = buffer.size() - 1;
+
+    std::cout << "\033[A";
+    std::cout << "\033[" << (cColuna + 1) << "G" << std::flush;
 
     while (true)
     {
@@ -104,6 +110,14 @@ int main(int argc, char* argv[])
                 std::cout << "\033[A";
 
                 cLinha--;
+
+                if (cColuna > (int)buffer[cLinha].length())
+                {
+                    cColuna = buffer[cLinha].length();
+                }
+
+                std::cout << "\033[" << (cColuna + 1) << "G";
+
             }
 
             if (key == 80 && cLinha < (int)buffer.size() - 1) // Seta pra baixo
@@ -111,9 +125,17 @@ int main(int argc, char* argv[])
                 std::cout << "\033[B";
 
                 cLinha++;
+
+                if (cColuna > (int)buffer[cLinha].length())
+                {
+                    cColuna = buffer[cLinha].length();
+                }
+
+                std::cout << "\033[" << (cColuna + 1) << "G";
+
             }
 
-            if (key == 75 && csbi.dwCursorPosition.X > 0) // Seta pra esquerda
+            if (key == 75 && cColuna > 0) // Seta pra esquerda
             {
                 std::cout << "\033[D";
 
@@ -132,46 +154,96 @@ int main(int argc, char* argv[])
 
         if (key == 8)
         {
-            if (!buffer.back().empty() && inEditor)
+            if (cColuna > 0 && inEditor)
             {
-                buffer.back().pop_back();
+                buffer[cLinha].erase(cColuna - 1, 1);
 
                 cColuna--;
 
-                std::cout << "\b \b";
-            }
+                std::cout << '\b';
 
-            else if (buffer.size() > 1)
+                std::string restoTexto = buffer[cLinha].substr(cColuna);
+
+                std::cout << "\033[K" << restoTexto;
+
+                if (!restoTexto.empty())
+                {
+                    std::cout << "\033[" << restoTexto.length() << 'D';
+                }
+
+                std::cout << std::flush;
+                
+                }
+
+            else if (buffer.size() > 1 && cLinha > 0)
             {
-                buffer.pop_back();
+                std::string cTextLine = buffer[cLinha];
+
+                buffer.erase(buffer.begin() + cLinha);
+
+                cLinha--;
+
+                cColuna = buffer[cLinha].length();
+
+                buffer[cLinha] += cTextLine;
 
                 std::cout << "\033[1A";
-                std::cout << "\033[" << buffer.back().length() + 1 << "G";
+                std::cout << "\r\033[K" << buffer[cLinha];
+                std::cout << "\n\033[K\033[1A";
+                std::cout << "\033[" << cColuna + 1 << "G";
             }
         }
 
         if (key == 13)
         {
-            std::cout << '\n';
+            std::string restoTexto;
+            restoTexto = buffer[cLinha].substr(cColuna);
 
-            buffer.push_back("");
+            buffer[cLinha] = buffer[cLinha].substr(0, cColuna);
+
+            buffer.insert(buffer.begin() + cLinha + 1, restoTexto);
+
+            std::cout << "\033[K\n\033[L" << restoTexto << '\r' << std::flush;
+
+            cLinha++;
+
+            cColuna = 0;
         }
 
         if (key >= 32 && key <= 126)
         {
             // std::cout << "cLinha=" << cLinha << " buffer.size()=" << buffer.size() << std::endl;
 
-            if (buffer.back().length() >= terminalWidth)
+            if (buffer[cLinha].length() >= terminalWidth)
             {
                 std::cout << std::endl;
+
+                buffer.insert(buffer.begin() + cLinha + 1, "");
+
+                cLinha++;
+
+                cColuna = 0;
 
                 buffer.push_back("");
             }
 
             buffer[cLinha].insert(cColuna, 1, (char)key);
+
+            std::string restoTexto;
+            restoTexto = buffer[cLinha].substr(cColuna);
+
             cColuna++;
 
-            std::cout << (char)key;
+            std::cout << "\033[K" << restoTexto;
+
+            int voltar = restoTexto.length() - 1;
+
+            if (voltar > 0)
+            {
+                std::cout << "\033[" << voltar << 'D';
+            }
+
+            std::cout << std::flush;
         }
     }
     
