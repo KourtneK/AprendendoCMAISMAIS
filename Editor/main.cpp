@@ -28,10 +28,10 @@ int main(int argc, char* argv[])
     size_t terminalWidth = csbi.srWindow.Right - csbi.srWindow.Left + 1;
 
     std::cout << "Largura do terminal: " << terminalWidth << "; " 
-            << "(Muda toda vez que voce redimensiona o terminal, " 
+            << "(Muda toda vez que 'voce redimensiona o terminal, " 
             << "sai e entra de novo no editor)" << std::endl;
     std::cout << "Cursor: X=" << csbi.dwCursorPosition.X << " Y=" << csbi.dwCursorPosition.Y << std::endl;
-    std::cout << "Bem vindo ao editor;" << '\n' << std::endl;
+    std::cout << "Bem vindo ao editor;" << '\n';
 
     if (argc > 1)
         {
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
         {
             key = _getch();
 
-            if (key == 72 && csbi.dwCursorPosition.Y > cursorInicialPosY) // Seta pra cima
+            if (key == 72 && csbi.dwCursorPosition.Y > cursorInicialPosY && cLinha > 0) // Seta pra cima
             {
                 std::cout << "\033[A";
 
@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
             {
                 std::cout << "\033[C";
 
-                cColuna--;
+                cColuna++;
             }
 
             continue;
@@ -136,6 +136,8 @@ int main(int argc, char* argv[])
             {
                 buffer.back().pop_back();
 
+                cColuna--;
+
                 std::cout << "\b \b";
             }
 
@@ -143,7 +145,7 @@ int main(int argc, char* argv[])
             {
                 buffer.pop_back();
 
-                std::cout << "\033[A";
+                std::cout << "\033[1A";
                 std::cout << "\033[" << buffer.back().length() + 1 << "G";
             }
         }

@@ -1,9 +1,8 @@
 *.exe
-
-Makefile
-
-ola.cpp
+*.cpp
 
 *.txt
 
 !example.txt
+!main.cpp
+!example.cpp
