@@ -1,3 +1,9 @@
 *.exe
 
 Makefile
+
+ola.cpp
+
+*.txt
+
+!example.txt

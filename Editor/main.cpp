@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
             {
                 std::cout << "\033[C";
 
-                cColuna++;
+                cColuna--;
             }
 
             continue;
@@ -157,7 +157,7 @@ int main(int argc, char* argv[])
 
         if (key >= 32 && key <= 126)
         {
-            std::cout << "cLinha=" << cLinha << " buffer.size()=" << buffer.size() << std::endl;
+            // std::cout << "cLinha=" << cLinha << " buffer.size()=" << buffer.size() << std::endl;
 
             if (buffer.back().length() >= terminalWidth)
             {
