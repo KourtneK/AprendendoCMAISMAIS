@@ -34,6 +34,7 @@ int main(int argc, char* argv[])
             << "(Muda toda vez que 'voce redimensiona o terminal, " 
             << "sai e entra de novo no editor)" << std::endl;
     std::cout << "Cursor: X=" << csbi.dwCursorPosition.X << " Y=" << csbi.dwCursorPosition.Y << std::endl;
+    std::cout << "aperte 'esc' para salvar e sair" << std::endl;
     std::cout << "Bem vindo ao editor;" << '\n' << std::endl;
 
     if (argc > 1)
