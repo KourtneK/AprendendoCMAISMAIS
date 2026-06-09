@@ -9,8 +9,10 @@
 #include <conio.h>
 #include <fstream>
 #include <windows.h>
+#include <winscard.h>
 #include "autopairs.hpp"
 #include "lspClient.hpp"
+
 
 std::vector<std::string> buffer;
 

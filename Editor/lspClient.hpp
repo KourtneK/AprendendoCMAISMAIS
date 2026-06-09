@@ -3,11 +3,14 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 #include <string>
 #include <time.h>
 #include <float.h>
 #include <conio.h>
 #include <windows.h>
+#include <winscard.h>
+
 
 
 struct lspRequest
@@ -52,6 +55,36 @@ namespace lspClient
         return response;
     }
 
+    inline void lspDraw(short currentLine const std::vector<std::string>& tabela)
+    {
+        if (tabela.empty())
+        {
+            return;
+        }
+
+        std::string screenRenderer;
+        screenRenderer = "\033[s\033[B\r+------------------------------+";
+
+        for (size_t index = 0; index < tabela.size(); index++)
+        {
+            screenRenderer = screenRenderer + ("\033[B\r| " tabela[index]);
+
+            int entrySpaces;
+            entrySpaces = 28 - tabela[index].length();
+
+            for (int j = 0; j < entrySpaces; j++)
+            {
+                screenRenderer = screenRenderer + " ";
+            }
+
+            screenRenderer = screenRenderer + "| ";
+        }
+
+        screenRenderer =  screenRenderer + "\033[B\r+------------------------------+\033[u";
+
+        std::cout << screenRenderer << std::flush;
+    }
+
     inline void exibirSugestoes(const lspResponse& response)
     {
         if (response.qntSuggest == 0)
@@ -59,50 +92,21 @@ namespace lspClient
             return;
         }
 
-        std::cout << "\033[s";
-        std::cout << "\033[B";
-        std::cout << "\r";
-
-        std::cout << "+";
-
-        for (int i = 0; i < 30; i++)
-        {
-            std::cout << "-";
-        }
-
-        std::cout << "+\n\r";
+        std::vector<std::string> tabela;
 
         for (int i = 0; i < response.qntSuggest; i++)
         {
-            std::string s(response.suggest[i]);
+            std::string sensor(response.suggest[i]);
 
-            if (s.length() > 28)
+            if (sensor.length()> 28)
             {
-                s = s.substr(0, 28);
+                sensor = sensor.substr(0, 28);
             }
 
-            std::cout << "| " << s;
-
-            for (int j = s.length(); j < 28; j++)
-            {
-                std::cout << " ";
-            }
-
-            std::cout << " |\n\r";
+            tabela.push_back(sensor);
         }
 
-        std::cout << "+";
-
-        for (int i = 0; i < 30; i++)
-        {
-            std::cout << "-";
-        }
-
-        std::cout << "+";
-
-        std::cout << "\033[u";
-
-        std::cout << std::flush;
+        lspDraw(0, 0, tabela);
     }
 
     inline void limparSugestoes(int qntSuggest)
@@ -110,24 +114,8 @@ namespace lspClient
         if (qntSuggest == 0)
         {
             return;
+        
         }
-
-        std::cout << "\033[s";
-
-        std::cout << "\033[B\r";
-
-        for (int i = 0; i < qntSuggest + 2; i++)
-        {
-            std::cout << "\033[K\n\r";
-        }
-
-        std::cout << "\033[u" << std::flush;
-    }
-
-    inline void disconnect(HANDLE pipe)
-    {
-        CloseHandle(pipe);
-    }
 }
 
 #endif
