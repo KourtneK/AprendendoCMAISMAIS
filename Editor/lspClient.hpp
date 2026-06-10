@@ -55,19 +55,24 @@ namespace lspClient
         return response;
     }
 
-    inline void lspDraw(short currentLine const std::vector<std::string>& tabela)
+    inline void lspDraw(short currentLine, short currentColum, const std::vector<std::string>& tabela)
     {
         if (tabela.empty())
         {
             return;
         }
 
+        short linhaAtual;
+        linhaAtual = currentLine + 1;   
+
         std::string screenRenderer;
-        screenRenderer = "\033[s\033[B\r+------------------------------+";
+        screenRenderer = "\033[" + std::to_string(linhaAtual) + ";" +                   +------------------------------+";
 
         for (size_t index = 0; index < tabela.size(); index++)
         {
-            screenRenderer = screenRenderer + ("\033[B\r| " tabela[index]);
+            short linhaAtual
+
+            screenRenderer = screenRenderer + ("| " + tabela[index]);
 
             int entrySpaces;
             entrySpaces = 28 - tabela[index].length();
@@ -87,6 +92,15 @@ namespace lspClient
 
     inline void exibirSugestoes(const lspResponse& response)
     {
+        CONSOLE_SCREEN_BUFFER_INFO csbi;
+        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+        SHORT coordX;
+        SHORT coordY;
+        coordX = csbi.dwCursorPosition.X;
+        coordY = csbi.dwCursorPosition.Y;
+        size_t terminalWidth = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+
+
         if (response.qntSuggest == 0)
         {
             return;
@@ -106,7 +120,7 @@ namespace lspClient
             tabela.push_back(sensor);
         }
 
-        lspDraw(0, 0, tabela);
+        lspDraw(coordY, coordX, tabela);
     }
 
     inline void limparSugestoes(int qntSuggest)
@@ -114,8 +128,7 @@ namespace lspClient
         if (qntSuggest == 0)
         {
             return;
-        
         }
+    }
 }
-
 #endif
