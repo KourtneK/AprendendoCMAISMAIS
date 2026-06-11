@@ -13,20 +13,20 @@
 #include "autopairs.hpp"
 #include "lspClient.hpp"
 
+std::vector<std::string> buffer; // Vetor buffer para guardar os caracteres
 
-std::vector<std::string> buffer;
+int key; // inteiro char que armazena os caracteres dentro do bfuffer
 
-int key;
+int cLinha; // inteiro para guardar a posicao da LINHA  atual do cursor
+int cColuna; // inteiro para guardar a posicao da COLUNA atual do cursor
 
-int cLinha;
-int cColuna;
-
+// funcao de atualizacao de sugestoes
 void attSuggest(HANDLE pipe, lspResponse ultimaResposta)
 {
-    lspClient::limparSugestoes(ultimaResposta.qntSuggest);
+    lspClient::limparSugestoes(ultimaResposta.qntSuggest); // chama a funcao de limpar sugestoes do 'cache'
     ultimaResposta.qntSuggest = 0;
 
-    int i;
+    int i; // inteiro para abstracao da COLUNA atual
     i = cColuna;
 
     while (i > 0 && (isalnum(buffer[cLinha][i]) || buffer[cLinha][i - 1] == '_'))
@@ -53,17 +53,19 @@ void attSuggest(HANDLE pipe, lspResponse ultimaResposta)
     }
 }
 
+// funcao MAIN
 int main(int argc, char* argv[])
 {
     system("cls");
 
+    // Pega as informacoes do buffer do terminal
     CONSOLE_SCREEN_BUFFER_INFO csbi;
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi); // largura do terminal
     SHORT cursorInicialPosX;
     SHORT cursorInicialPosY;
-    cursorInicialPosX = csbi.dwCursorPosition.X;
-    cursorInicialPosY = csbi.dwCursorPosition.Y;
-    size_t terminalWidth = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+    cursorInicialPosX = csbi.dwCursorPosition.X; // posicao do cursor X
+    cursorInicialPosY = csbi.dwCursorPosition.Y; // posicao do cursor Y
+    size_t terminalWidth = csbi.srWindow.Right - csbi.srWindow.Left + 1; // Calculo da largura do terminal
 
     std::cout << "Largura do terminal: " << terminalWidth << "; " 
             << "(Muda toda vez que 'voce redimensiona o terminal, " 
@@ -72,6 +74,7 @@ int main(int argc, char* argv[])
     std::cout << "aperte 'esc' para salvar e sair" << std::endl;
     std::cout << "Bem vindo ao editor;" << '\n' << std::endl;
 
+    // Exige passar um nome e extensao de um arquivo para abrir o editor
     if (argc > 1)
         {
             std::ifstream arquivo(argv[1]);
@@ -99,28 +102,34 @@ int main(int argc, char* argv[])
         return 0;
     }
 
+    // referencia para a os caracteres na linha guardados no buffer
     for (const std::string& linha : buffer)
     {
         std::cout << linha << '\n';
     }
 
+    // transforma a referencia em informacao para a LINHA atual e COLUNA atual
     cColuna = buffer.back().length();
     cLinha = buffer.size() - 1;
 
     std::cout << "\033[A";
-    std::cout << "\033[" << (cColuna + 1) << "G" << std::flush;
+    std::cout << "\033[" << (cColuna + 1) << "G" << std::flush; // passa a informacao para o buffer
 
+    // Conecta com o LSP
     STARTUPINFO si = { sizeof(si) };
     PROCESS_INFORMATION pi;
     CreateProcess("lspServer.exe", NULL, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
     Sleep(100); // espera o servidor iniciar
     HANDLE lspPipe = lspClient::connect();
 
+    // Guarda a ultima resposta do LSP
     lspResponse ultimaResposta;
     ultimaResposta.qntSuggest = 0;
 
+    // Loop do editor (teclas, setas, enter, tab, backspace)
     while (true)
     {
+        // Estado de 'no editor'
         GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
         bool inEditor = csbi.dwCursorPosition.Y > cursorInicialPosY || 
             (csbi.dwCursorPosition.Y == cursorInicialPosY && csbi.dwCursorPosition.X > cursorInicialPosX);
@@ -128,15 +137,17 @@ int main(int argc, char* argv[])
 
         key = _getch();
         
-        if (key == 27)
+        if (key == 27) // Esc
         {
-            lspClient::limparSugestoes(ultimaResposta.qntSuggest);
+            lspClient::limparSugestoes(ultimaResposta.qntSuggest); // Limpa o cache do LSP
             lspClient::disconnect(lspPipe);
 
-            TerminateProcess(pi.hProcess, 0); 
+            // Encerra o LSP
+            TerminateProcess(pi.hProcess, 0);
             CloseHandle(pi.hProcess);
             CloseHandle(pi.hThread);
 
+            // Salva o arquivo automaticamente
             std::ofstream arquivo(argv[1]);
 
             if (arquivo.is_open())
@@ -150,9 +161,10 @@ int main(int argc, char* argv[])
             }
 
             system("cls");
-            break;
+            break; // Encerra o loop ao apertar 'esc'
         }
 
+        // Navegacao por setas
         if (key == 224)
         {
             key = _getch();
@@ -204,7 +216,7 @@ int main(int argc, char* argv[])
             continue;
         }
 
-        if (key == 8)
+        if (key == 8) // Backspace
         {
             if (cColuna > 0 && inEditor)
             {
@@ -245,7 +257,7 @@ int main(int argc, char* argv[])
             }
         }
 
-        if (key == 13)
+        if (key == 13) // Enter
         {
             std::string restoTexto;
             restoTexto = buffer[cLinha].substr(cColuna);
@@ -260,7 +272,7 @@ int main(int argc, char* argv[])
             cColuna = 0;
         }
 
-        if (key >= 32 && key <= 126)
+        if (key >= 32 && key <= 126) // Letras aA-zZ
         {
             // std::cout << "cLinha=" << cLinha << " buffer.size()=" << buffer.size() << std::endl;
 
@@ -269,6 +281,7 @@ int main(int argc, char* argv[])
             lspClient::exibirSugestoes(response);
             ultimaResposta = response;
 
+            // Garantia de que o buffer vai guaradar todos os caraccteres
             if (buffer[cLinha].length() >= terminalWidth)
             {
                 std::cout << std::endl;
@@ -285,6 +298,7 @@ int main(int argc, char* argv[])
             char fechamentoChar;
             fechamentoChar = AutoPairs::get_closing_pair((char)key);
 
+            // Conexao do autopairs
             if (fechamentoChar != '\0')
             {
                 buffer[cLinha].insert(cColuna, 1, (char)key);
